@@ -28,4 +28,4 @@ Some of the tech used in this project include:
 ## Preview
 
 #### Front Page
-![Front Page](./preview_images/preview1.jpg)
+![Front Page](/preview_images/preview1.jpg)
