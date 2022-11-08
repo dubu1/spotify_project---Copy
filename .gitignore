@@ -1,0 +1,5 @@
+Server/node_modules
+Server/configs
+Client/node_modules
+.idea
+.vscode
