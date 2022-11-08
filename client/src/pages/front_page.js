@@ -77,8 +77,7 @@ export default function FrontPage() {
                             activeTabIndex={activeIndex}
                             onChange={handleChange}
                             tabs={tabs}
-                        />
-                        
+                        />                      
                     </Box>
 
                 </Flex>

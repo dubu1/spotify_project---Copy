@@ -117,13 +117,11 @@ export function Header({ loggedIn, setLoggedIn }) {
                     </Flex>
                 </div>
 
-                <Box padding={3}>
+                {/* <Box padding={3}>
                     <Flex>
                         <HelperButtons setLoggedIn={setLoggedIn} />
-
-                    </Flex>
-                    
-                </Box>
+                    </Flex>                
+                </Box> */}
             </Box>
         </Flex>
     );
