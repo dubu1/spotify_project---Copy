@@ -1,29 +1,47 @@
-import React, { useState, useRef } from 'react';
-import { Box, Button, Switch, Label, Text, Flex, SearchField, Popover } from 'gestalt';
-import 'gestalt/dist/gestalt.css';
-import { search, getUserFollowing } from '../routes/spotify';
+import React, { useState, useRef, useContext } from 'react'
 
-export function Search({ setQueryData, displayPage }) {
-    const [searchText, setSearchText] = useState("");
-    const [artistSwitched, setArtistSwitched] = useState(true);
-    const [tracksSwitched, setTracksSwitched] = useState(displayPage==='frontPage'?true:false);
-    const [albumsSwitched, setAlbumsSwitched] = useState(displayPage==='frontPage'?true:false);
-    const anchorRef = useRef();
-    const limit = 7;
-    const market = "GB";
+import { Box, Button, Switch, Label, Text, Flex, SearchField, Popover } from 'gestalt'
+
+import 'gestalt/dist/gestalt.css'
+import { SearchContext } from '../pages/front_page'
+import { search } from '../routes/spotify'
+
+export function Search ({ setQueryData }) {
+    const [searchText, setSearchText] = useState('')
+    const [artistSwitched, setArtistSwitched] = useState(true)
+    const [tracksSwitched, setTracksSwitched] = useState(true)
+    const [albumsSwitched, setAlbumsSwitched] = useState(true)
+    const displayEmpty = useContext(SearchContext)
+
+    const genres = ['anime', 'dance', 'edm', 'hip-hop', 'j-rock', 'k-pop', 'pop', 'sad']
+    const anchorRef = useRef()
+    const limit = 7
+    const market = 'GB'
 
     const getTypes = () => {
         const type = []
-        if (artistSwitched) type.push("artist");
-        if (tracksSwitched) type.push("track");
-        if (albumsSwitched) type.push("album");
+        if (artistSwitched) type.push('artist')
+        if (tracksSwitched) type.push('track')
+        if (albumsSwitched) type.push('album')
         return type.join()
     }
 
-    const searchTabs = () => {
-        if (displayPage==="frontPage") {
-            return (
-                <div ref={anchorRef}>
+    // set initial search when data is empty
+    React.useEffect(() => {
+        if (!displayEmpty) { return }
+        search({
+            query: `genre:${genres[Math.floor(Math.random() * genres.length)]}`,
+            type: getTypes(),
+            limit,
+            market
+        }, setQueryData)
+    }, [])
+
+    return (
+
+        <Box width="55%" marginBottom={8} marginTop={4} marginEnd={3} alignSelf="center">
+
+            <div ref={anchorRef}>
                 <Box marginBottom={2} marginEnd={2}>
                     <Flex justifyContent="end" gap={4}>
                         <Flex alignItems="center" gap={2}>
@@ -64,39 +82,7 @@ export function Search({ setQueryData, displayPage }) {
                         </Flex>
                     </Flex>
                 </Box>
-                </div>
-            )
-        }
-    }
-
-    const searchButton = () => {
-        return (
-            <Button
-            size='lg'
-            text="Search"
-            onClick={() => {
-                if (displayPage){
-                    search({
-                        query: searchText,
-                        type: getTypes(),
-                        limit: limit,
-                        market: market
-                    }, setQueryData)
-                } else {
-                    getUserFollowing(setQueryData)
-                }
-
-            }
-                
-        } />
-        )
-    }
-
-    return (
-
-        <Box width="55%" marginBottom={8} marginTop={4} marginEnd={3} alignSelf="center">
-
-            { searchTabs() }
+            </div>
 
             <Flex gap={2}>
                 <Flex.Item flex="grow" >
@@ -104,38 +90,47 @@ export function Search({ setQueryData, displayPage }) {
                         size='lg'
                         accessibilityLabel="Search Bar"
                         accessibilityClearButtonLabel="Clear search field"
-                        placeholder={displayPage==="frontPage" ? "Search for artist, track or song": "Search" }
+                        placeholder={'Search for artist, track or song'}
                         id="spotifySearchField"
                         value={searchText}
                         onChange={(val) => { setSearchText(val.value) }}
                         onKeyDown={(props) => {
                             const keyPressed = props.event.code
 
-                            if (keyPressed === "Enter") {
+                            if (keyPressed === 'Enter') {
                                 search({
                                     query: searchText,
                                     type: getTypes(),
-                                    limit: limit,
-                                    market: market
+                                    limit,
+                                    market
                                 }, setQueryData)
                             }
                         }}
                     />
                 </Flex.Item>
-                { searchButton() }
+                <Button
+                    size='lg'
+                    text="Search"
+                    onClick={() => {
+                        search({
+                            query: searchText,
+                            type: getTypes(),
+                            limit,
+                            market
+                        }, setQueryData)
+                    }}
+                />
             </Flex>
-
-
 
             {(!artistSwitched && !albumsSwitched && !tracksSwitched) &&
             <Box
-            dangerouslySetInlineStyle={{
-                __style: {
-                    opacity:"0.8",
-                }
-            }}
+                dangerouslySetInlineStyle={{
+                    __style: {
+                        opacity: '0.8'
+                    }
+                }}
             >
-                
+
                 <Popover
                     anchor={anchorRef.current}
                     color="red"
@@ -146,14 +141,14 @@ export function Search({ setQueryData, displayPage }) {
                     size="flexible"
                 >
                     <Box padding={2}>
-                    <Text color="inverse" align="center">
+                        <Text color="inverse" align="center">
                         No search option selected!
-                    </Text>
+                        </Text>
                     </Box>
                 </Popover>
             </Box>
             }
         </Box>
 
-    );
+    )
 }

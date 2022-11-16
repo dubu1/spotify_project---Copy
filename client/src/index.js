@@ -1,14 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import './fonts/Spotify/GothamBold.ttf';
-import './fonts/montserrat/Montserrat-Bold.ttf';
+import React from 'react'
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import ReactDOM from 'react-dom/client'
+
+import './index.css'
+import App from './App'
+import './fonts/Spotify/GothamBold.ttf'
+import './fonts/montserrat/Montserrat-Bold.ttf'
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
+)

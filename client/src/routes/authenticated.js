@@ -1,38 +1,38 @@
 const isAuthenticated = async () => {
-    const res = await fetch("/login/isAuthenticated", {
+    const res = await fetch('/login/isAuthenticated', {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
         },
         credentials: 'include'
-    });
+    })
     const json = await res.json()
     return json.result
 }
 
 const click = async () => {
-    const res = await fetch("/helpers/click", {
+    const res = await fetch('/helpers/click', {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
         },
         credentials: 'include'
-    });
+    })
     const json = await res.json()
-    console.log(json);
+    console.log(json)
 }
 
 const easyLogin = async () => {
-    const res = await fetch("/helpers/easy_login", {
+    const res = await fetch('/helpers/easy_login', {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
         },
         credentials: 'include'
-    });
+    })
     const json = await res.json()
     // console.log(json);
     return json
@@ -40,17 +40,17 @@ const easyLogin = async () => {
 }
 
 const logSession = async () => {
-    const res = await fetch("/helpers/get_session", {
+    const res = await fetch('/helpers/get_session', {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
         },
         credentials: 'include'
-    });
+    })
     const json = await res.json()
-    console.log(json);
+    console.log(json)
     return json
 }
 
-export {isAuthenticated, click, easyLogin, logSession}
+export { isAuthenticated, click, easyLogin, logSession }

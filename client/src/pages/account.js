@@ -1,25 +1,26 @@
-import React, { useState, useEffect, useTransition } from "react";
-import { useOutletContext } from "react-router-dom";
-import 'gestalt/dist/gestalt.css';
-import { Box, Button, Flex, Status, Text } from 'gestalt';
-import { spotifySignIn } from '../routes/spotify';
-import { updateToken, getUserToken, unlinkSpotifyAccount } from '../routes/firebase';
-import { isAuthenticated } from '../routes/authenticated';
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useTransition } from 'react'
 
-function Account() {
+import 'gestalt/dist/gestalt.css'
+import { Box, Button, Flex, Status, Text } from 'gestalt'
+import { useOutletContext, useNavigate } from 'react-router-dom'
+
+import { isAuthenticated } from '../routes/authenticated'
+import { updateToken, getUserToken, unlinkSpotifyAccount } from '../routes/firebase'
+import { spotifySignIn } from '../routes/spotify'
+
+function Account () {
     const [loggedIn, setLoggedIn] = useOutletContext()
     const [accountConnected, setAccountConnected] = useState(false)
     const navigate = useNavigate()
 
-    useEffect( () =>  {
+    useEffect(() => {
         const res = checkAuthenticated()
         if (!res) {
             navigate('/')
         } else {
             getToken()
         }
-    }, [loggedIn]);
+    }, [loggedIn])
 
     const spotifySignInCallback = (url) => {
         window.open(url)
@@ -32,7 +33,7 @@ function Account() {
 
     const getToken = async () => {
         const token = await getUserToken()
-        if (token.accessToken !== ""){
+        if (token.accessToken !== '') {
             setAccountConnected(true)
         }
     }
@@ -62,14 +63,14 @@ function Account() {
     const showUnlinkButton = () => {
         if (accountConnected) {
             return (
-                <Button text="Unlink Account" onClick={()=> {   
+                <Button text="Unlink Account" onClick={() => {
                     unlinkSpotifyAccount()
                     setAccountConnected(false)
-                }} />   
+                }} />
             )
         } else {
             return (
-                <Button text="Unlink Account" disabled/>   
+                <Button text="Unlink Account" disabled/>
             )
         }
     }
@@ -77,7 +78,7 @@ function Account() {
     return (
         <Box height={400} >
             <Button text="get users spotify account" onClick={() => { }} />
- 
+
             <Button text="get user" onClick={() => { getUserToken() }} />
 
             <Flex height="100%" justifyContent="center" alignItems="center" direction="column" >
@@ -93,7 +94,7 @@ function Account() {
             </Flex>
 
         </Box>
-    );
+    )
 };
 
-export default Account;
+export default Account

@@ -1,42 +1,38 @@
-import React, { useRef, useState } from 'react';
-import { Box, Button, Flex, Layer, Modal, SlimBanner, Text, TextField } from 'gestalt';
-import 'gestalt/dist/gestalt.css';
-import { login } from '../routes/login';
+import React, { useRef, useState } from 'react'
 
+import { Box, Button, Flex, Layer, Modal, SlimBanner, Text, TextField } from 'gestalt'
 
-export function Login({ showLogin, setShowLogin, setLoggedIn }) {
-    const [userValue, setUserValue] = useState('');
-    const [passValue, setPassValue] = useState('');
-    const [usernameError, setUsernameError] = useState(false);
-    const [passwordError, setPasswordError] = useState(false);
-    const [responseError, setResponseError] = useState("");
+import 'gestalt/dist/gestalt.css'
+import { login } from '../routes/login'
+
+export function Login ({ showLogin, setShowLogin, setLoggedIn }) {
+    const [userValue, setUserValue] = useState('')
+    const [passValue, setPassValue] = useState('')
+    const [usernameError, setUsernameError] = useState(false)
+    const [passwordError, setPasswordError] = useState(false)
+    const [responseError, setResponseError] = useState('')
 
     const inputValidation = () => {
-        setUsernameError(userValue === "" ? true : false)
-        setPasswordError(passValue === "" ? true : false)
+        setUsernameError(userValue === '')
+        setPasswordError(passValue === '')
     }
 
-
     const processLoginResult = ({ result, message }) => {
-        if (result === "success") {
+        if (result === 'success') {
             setLoggedIn(true)
             window.location.reload(false)
-        }
-        else if (result === "failure") {
+        } else if (result === 'failure') {
             setResponseError(message)
-        }
-        else {
+        } else {
             setUsernameError(true)
             setPasswordError(true)
         }
     }
 
-
     return (
-
         <Layer>
             <Modal
-                accessibilityModalLabel="Choose how to claim site"
+                accessibilityModalLabel=""
                 align="start"
                 onDismiss={() => setShowLogin(!showLogin)}
                 heading="Login"
@@ -54,15 +50,15 @@ export function Login({ showLogin, setShowLogin, setLoggedIn }) {
 
                 <Box paddingX={12} marginBottom={3}>
                     {
-                        (responseError !== "") &&
-                        <Box marginBottom={5}>                           
+                        (responseError !== '') &&
+                        <Box marginBottom={5}>
                             <SlimBanner
                                 type='error'
                                 iconAccessibilityLabel="Error"
                                 dismissButton={{
                                     accessibilityLabel: 'Dismiss banner',
-                                    onDismiss: () => {setResponseError('')},
-                                  }}
+                                    onDismiss: () => { setResponseError('') }
+                                }}
                                 message={responseError}
                             />
                         </Box>
@@ -72,28 +68,28 @@ export function Login({ showLogin, setShowLogin, setLoggedIn }) {
                         id="username-text"
                         label="Username"
                         onChange={({ value }) => {
-                            setUserValue(value);
+                            setUserValue(value)
                         }}
                         type="text"
                         value={userValue}
                         size="lg"
-                        errorMessage={usernameError && "Username error"}
+                        errorMessage={usernameError && 'Username error'}
                     />
                     <TextField
                         autoComplete="current-password"
                         id="password-text"
                         label="Password"
                         onChange={({ value }) => {
-                            setPassValue(value);
+                            setPassValue(value)
                         }}
                         type="password"
                         value={passValue}
                         size="lg"
-                        errorMessage={passwordError && "Password error"}
+                        errorMessage={passwordError && 'Password error'}
                     />
                 </Box>
 
             </Modal>
         </Layer>
-    );
+    )
 }

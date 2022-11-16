@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-
+const passport = require('passport')
 
 router.get("/get_session", (req, res) => {
     res.send(req.session)
@@ -29,7 +29,6 @@ router.get("/click", (req, res) => {
         console.log(req.session);
         res.send({ message :`ok` })
     });
-	res.send("root")
 })
 
 

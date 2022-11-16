@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5001",
+  "proxy": "http://127.0.0.1:5001/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -40,7 +40,12 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^8.25.0",
-    "eslint-plugin-gestalt": "^78.1.1"
+    "eslint": "^8.27.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-gestalt": "^78.1.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.5.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.31.10"
   }
 }
