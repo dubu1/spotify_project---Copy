@@ -6,14 +6,14 @@ import 'gestalt/dist/gestalt.css'
 import { SearchContext } from '../pages/front_page'
 import { getSongFeed } from '../routes/spotify'
 
-export function SongFeedSearch ({ setQueryData, loggedIn }) {
+export function SongFeedSearch ({ setData, loggedIn }) {
     const [searchText, setSearchText] = useState('')
     const displayEmpty = useContext(SearchContext)
 
     // get following if results is empty
     React.useEffect(() => {
         if (!displayEmpty || !loggedIn) { return }
-        getSongFeed(setQueryData)
+        getSongFeed(setData)
     }, [])
 
     return (

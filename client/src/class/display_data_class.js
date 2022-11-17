@@ -4,7 +4,7 @@ class DisplayData {
         this.limit = limit === undefined ? -1 : limit
         this.next = next === undefined ? '' : next
         this.offset = offset === undefined ? -1 : offset
-        this.idSet = idSet === undefined ? new Set() : idSet
+        this.idSet = idSet === undefined ? [] : idSet
     }
 
     setSongFeedData (data) {
@@ -34,7 +34,7 @@ class DisplayData {
     appendData (data) {
         const [newItems, newIdSet] = this.filterData(data)
         this.items = [].concat(this.items, newItems)
-        this.idSet = new Set([...this.idSet, ...newIdSet])
+        this.idSet = [].concat(this.idSet, newItems)
 
         if (data.artists !== undefined) {
             this.limit += data.artists.limit
@@ -51,21 +51,21 @@ class DisplayData {
     // remove items with no images
     filterData (data) {
         const itemsArr = []
-        const idSet = new Set()
+        const newIdSet = []
 
         for (const type in data) {
             for (const item of data[type].items) {
-                if (item.type === 'track') {
-                    idSet.add(item.id)
+                if (item.type === 'track' && !this.idSet.includes(item.id)) {
+                    newIdSet.push(item.id)
                     itemsArr.push(item)
-                } else if (item.images.length > 0 && !this.idSet.has(item.id)) {
-                    idSet.add(item.id)
+                } else if (item.images.length > 0 && !this.idSet.includes(item.id)) {
+                    newIdSet.push(item.id)
                     itemsArr.push(item)
                 }
             }
         }
 
-        return [itemsArr, idSet]
+        return [itemsArr, newIdSet]
     }
 
     // return new object with same values
@@ -82,6 +82,20 @@ class DisplayData {
     // return true if items are empty
     isEmpty () {
         return this.items.length === 0
+    }
+
+    // adds artist to followed list
+    appendFollowingArtist (data) {
+        if (!this.idSet.includes(data.id)) {
+            this.items.push(data)
+            this.idSet.push(data.id)
+        }
+    }
+
+    // remove artist from following
+    removeFollowingArtist (data) {
+        this.items = this.items.filter((artist) => { return artist.id !== data.id })
+        this.idSet = this.idSet.filter((id) => { return id !== data.id })
     }
 }
 

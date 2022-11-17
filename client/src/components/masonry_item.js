@@ -1,39 +1,74 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-import { Card, Image, Mask, Text } from 'gestalt'
+import { Box, Button, Card, Flex, Image, Mask, TapArea, Text } from 'gestalt'
+
 import '../css/masonry_item.css'
 
 export function MasonryItem ({ data }) {
-    console.log(data)
+    const isMobile = window.screen.width < 1280
+    const [showHover, setShowHover] = useState(false)
     const getImage = () => {
         if (data.type === 'track') return data.album.images[0]
         else return data.images[0]
     }
 
+    const mobileTapShowBtns = () => {
+        if (!showHover && isMobile) {
+            setShowHover(true)
+        } else if (showHover && isMobile) {
+            setShowHover(false)
+        }
+    }
+
     return (
+
         <div className="my-masonry-item">
-            <Card
-                image={
-                    <Mask height={220} rounding={1}>
-                        <Image
-                            alt={data.name}
-                            naturalHeight={getImage().height}
-                            naturalWidth={getImage().width}
-                            src={getImage().url}
-                            fit="cover"
-                        />
-                    </Mask>
+            <TapArea rounding={1} tapStyle='compress' onTap={() => { mobileTapShowBtns() }}>
+                <Card
+                    image={
+                        <Mask height={220} rounding={1}>
+                            <Image
+                                alt={data.name}
+                                naturalHeight={getImage().height}
+                                naturalWidth={getImage().width}
+                                src={getImage().url}
+                                fit="cover"
+                            />
+                        </Mask>
 
-                }
+                    }
+                    onMouseEnter={() => { if (!showHover) { setShowHover(true) } }}
+                    onMouseLeave={() => { if (showHover) { setShowHover(false) } }}
+                >
 
-                // eslint-disable-next-line react/no-children-prop
-                children={
-                    <>
-                        <Text align="center">{data.name}</Text>
-                        {/* <Text align="center">{props.data.id}</Text> */}
-                    </>
-                }
-            />
+                    <Flex justifyContent='center'>
+
+                        <Text align="center" lineClamp={1}>
+                            <Text align="center" inline italic weight='bold' color='subtle'>{data.type.toUpperCase()}: </Text>
+                            <Text align="center" inline weight='bold'>{data.name}</Text>
+                        </Text>
+
+                        {showHover &&
+                            <div className='my-hover-item' style={{ zIndex: '99' }} >
+                                <Box top left position='absolute' width='100%' borderStyle='lg' >
+                                    <Flex justifyContent='center'>
+                                        {data.type === 'artist' &&
+                                            <Box>
+                                                {data.isFollowing === true
+                                                    ? <Button text='Unfollow' onClick={() => { data.cb(data) }} />
+                                                    : <Button text='Follow' onClick={() => { data.cb(data) }} />
+                                                }
+                                            </Box>
+                                        }
+
+                                    </Flex>
+                                </Box>
+                            </div>
+                        }
+                    </Flex>
+
+                </Card>
+            </TapArea>
         </div>
 
     )

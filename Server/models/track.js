@@ -1,6 +1,6 @@
 
 class Track {
-    constructor(data) {   
+    constructor (data) {
         this.releaseDate = data.album.release_date
         this.album = data.album
         this.name = data.name
@@ -13,10 +13,9 @@ class Track {
         this.type = data.type
     }
 
-    setReleaseDate(releaseDate) {
+    setReleaseDate (releaseDate) {
         this.releaseDate = releaseDate
     }
-
 }
 
 module.exports = Track

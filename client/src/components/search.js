@@ -6,7 +6,7 @@ import 'gestalt/dist/gestalt.css'
 import { SearchContext } from '../pages/front_page'
 import { search } from '../routes/spotify'
 
-export function Search ({ setQueryData }) {
+export function Search ({ setData }) {
     const [searchText, setSearchText] = useState('')
     const [artistSwitched, setArtistSwitched] = useState(true)
     const [tracksSwitched, setTracksSwitched] = useState(true)
@@ -34,7 +34,7 @@ export function Search ({ setQueryData }) {
             type: getTypes(),
             limit,
             market
-        }, setQueryData)
+        }, setData)
     }, [])
 
     return (
@@ -103,7 +103,7 @@ export function Search ({ setQueryData }) {
                                     type: getTypes(),
                                     limit,
                                     market
-                                }, setQueryData)
+                                }, setData)
                             }
                         }}
                     />
@@ -117,7 +117,7 @@ export function Search ({ setQueryData }) {
                             type: getTypes(),
                             limit,
                             market
-                        }, setQueryData)
+                        }, setData)
                     }}
                 />
             </Flex>

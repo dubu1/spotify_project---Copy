@@ -1,19 +1,18 @@
-const XMLHttpRequest = require("xhr2");
-const SPOTIFY_CONFIGS = require("../configs/spotify_configs");
+const XMLHttpRequest = require('xhr2')
+
+const SPOTIFY_CONFIGS = require('../configs/spotify_configs')
 
 const authHeader = 'Basic ' + Buffer.from(SPOTIFY_CONFIGS.CLIENT_ID + ':' + SPOTIFY_CONFIGS.CLIENT_SECRET).toString('base64')
-const url = "https://accounts.spotify.com/api/token"
+const url = 'https://accounts.spotify.com/api/token'
 
-
-function getAccessToken() {
+function getAccessToken () {
     return new Promise(function (resolve, reject) {
+        const xhr = new XMLHttpRequest()
 
-        let xhr = new XMLHttpRequest();
-
-        const formParams = "grant_type=client_credentials"
-        xhr.open("POST", url);
-        xhr.setRequestHeader("Authorization", authHeader)
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+        const formParams = 'grant_type=client_credentials'
+        xhr.open('POST', url)
+        xhr.setRequestHeader('Authorization', authHeader)
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
 
         // get access token on success
         xhr.onload = () => {
@@ -24,19 +23,18 @@ function getAccessToken() {
                 resolve(JSON.parse(xhr.responseText).access_token)
             }
         }
-        xhr.send(formParams);
+        xhr.send(formParams)
     })
 }
 
-function getAccessTokenForUser(code, redirectURI) {
+function getAccessTokenForUser (code, redirectURI) {
     return new Promise(function (resolve, reject) {
+        const xhr = new XMLHttpRequest()
+        const formParams = 'code=' + code + '&redirect_uri=' + redirectURI + '&grant_type=authorization_code'
 
-        let xhr = new XMLHttpRequest();
-        const formParams = "code=" + code + "&redirect_uri=" + redirectURI + "&grant_type=authorization_code"
-
-        xhr.open("POST", url);
-        xhr.setRequestHeader("Authorization", authHeader)
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+        xhr.open('POST', url)
+        xhr.setRequestHeader('Authorization', authHeader)
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
 
         // get access token on success
         xhr.onload = () => {
@@ -45,20 +43,19 @@ function getAccessTokenForUser(code, redirectURI) {
                 resolve(JSON.parse(xhr.responseText))
             } else {
                 reject(JSON.parse(xhr.responseText))
-            } 
+            }
         }
-        xhr.send(formParams);
+        xhr.send(formParams)
     })
 }
 
-function refreshAccessTokenForUser(refreshToken) {
+function refreshAccessTokenForUser (refreshToken) {
     return new Promise(function (resolve, reject) {
-
-        let xhr = new XMLHttpRequest();
-        const formParams = "grant_type=refresh_token&refresh_token=" + refreshToken
-        xhr.open("POST", url);
-        xhr.setRequestHeader("Authorization", authHeader)
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+        const xhr = new XMLHttpRequest()
+        const formParams = 'grant_type=refresh_token&refresh_token=' + refreshToken
+        xhr.open('POST', url)
+        xhr.setRequestHeader('Authorization', authHeader)
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
 
         // get access token on success
         xhr.onload = () => {
@@ -67,11 +64,10 @@ function refreshAccessTokenForUser(refreshToken) {
                 resolve(JSON.parse(xhr.responseText))
             } else {
                 reject(JSON.parse(xhr.responseText))
-            } 
+            }
         }
-        xhr.send(formParams);
+        xhr.send(formParams)
     })
 }
 
-
-module.exports = {getAccessToken, getAccessTokenForUser, refreshAccessTokenForUser}
+module.exports = { getAccessToken, getAccessTokenForUser, refreshAccessTokenForUser }

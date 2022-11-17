@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, createContext } from 'react'
 
-import { Box, Flex, Masonry } from 'gestalt'
+import { Box, Masonry } from 'gestalt'
 
 import 'gestalt/dist/gestalt.css'
 import { search } from '../routes/spotify'
@@ -18,10 +18,20 @@ const loadMoreItems = async (nextURL, addNextData) => {
     }, addNextData)
 }
 
-export function Results ({ windowSize, displayData, addNextData }) {
+export function Results ({ windowSize, displayData, followingData, addNextData, followingCBs }) {
     const [isFetching, setFetching] = useState(false)
     const scrollContainerRef = useRef(null)
-    const items = displayData.items
+    const items = displayData.items.map(item => {
+        if (item.type !== 'artist') return item
+        if (!followingData.idSet.includes(item.id)) {
+            item.isFollowing = false
+            item.cb = (data) => { followingCBs.addToFollowingCb(data) }
+        } else if (followingData.idSet.includes(item.id)) {
+            item.isFollowing = true
+            item.cb = (data) => { followingCBs.removeFromFollowingCb(data) }
+        }
+        return item
+    })
     const nextURL = displayData.next
 
     return (

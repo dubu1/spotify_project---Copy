@@ -1,27 +1,26 @@
 
-
 class Album {
-    constructor(data) {       
-        this.name = data.name,
-        this.id = data.id,
-        this.releaseDate = data.release_date,
-        this.albumType = data.album_type,
-        this.artists = data.artists,
-        this.externalUrls = data.external_urls,
-        this.href = data.href,
-        this.images = data.images,
+    constructor (data) {
+        this.name = data.name
+        this.id = data.id
+        this.releaseDate = data.release_date
+        this.albumType = data.album_type
+        this.artists = data.artists
+        this.externalUrls = data.external_urls
+        this.href = data.href
+        this.images = data.images
         this.tracks = []
     }
 
-    addTrack(track) {
+    addTrack (track) {
         this.tracks.push(track)
     }
 
-    setTracks(list) {
+    setTracks (list) {
         this.tracks = list
     }
 
-    get() {
+    get () {
         return {
             albumType: this.albumType,
             artists: this.artists,
@@ -35,6 +34,5 @@ class Album {
         }
     }
 }
-
 
 module.exports = Album

@@ -1,19 +1,18 @@
-import React, { useState, useRef, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 
-import { Box, Button, Text, Flex, SearchField, Popover } from 'gestalt'
+import { Box, Button, Text, Flex, SearchField } from 'gestalt'
 
 import 'gestalt/dist/gestalt.css'
 import { SearchContext } from '../pages/front_page'
 import { getUserFollowing } from '../routes/spotify'
 
-export function FollowedSearch ({ setQueryData, loggedIn }) {
+export function FollowedSearch ({ setData, loggedIn }) {
+    const isEmpty = useContext(SearchContext)
     const [searchText, setSearchText] = useState('')
-    const displayEmpty = useContext(SearchContext)
 
     // get following if results is empty
     React.useEffect(() => {
-        if (!displayEmpty || !loggedIn) { return }
-        getUserFollowing(setQueryData)
+        if (isEmpty && loggedIn) { getUserFollowing(setData) }
     }, [])
 
     return (

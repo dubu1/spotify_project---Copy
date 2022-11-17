@@ -27,6 +27,32 @@ const getSongFeed = async (callbackFunc) => {
     callbackFunc(json)
 }
 
+const spotifyFollowArtist = async (artistID) => {
+    const res = await fetch('/spotify/follow_artist', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+        },
+        body: JSON.stringify({ artist_id: artistID })
+    })
+    const json = await res.json()
+    return json
+}
+
+const spotifyUnfollowArtist = async (artistID) => {
+    const res = await fetch('/spotify/unfollow_artist', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+        },
+        body: JSON.stringify({ artist_id: artistID })
+    })
+    const json = await res.json()
+    return json
+}
+
 const spotifySignIn = async (callbackFunc) => {
     const res = await fetch('/spotify/login', {
         method: 'GET',
@@ -41,4 +67,4 @@ const spotifySignIn = async (callbackFunc) => {
     callbackFunc(json.url)
 }
 
-export { search, spotifySignIn, getUserFollowing, getSongFeed }
+export { search, spotifySignIn, getUserFollowing, getSongFeed, spotifyFollowArtist, spotifyUnfollowArtist }
