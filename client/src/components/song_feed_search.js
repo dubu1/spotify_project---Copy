@@ -4,16 +4,15 @@ import { Box, Button, Text, Flex, SearchField } from 'gestalt'
 
 import 'gestalt/dist/gestalt.css'
 import { SearchContext } from '../pages/front_page'
-import { getSongFeed } from '../routes/spotify'
+import { getSongFeedAuthed, getSongFeedUnauthed } from '../routes/spotify'
 
-export function SongFeedSearch ({ setData, loggedIn }) {
+export function SongFeedSearch ({ setData, loggedIn, followingData }) {
     const [searchText, setSearchText] = useState('')
     const displayEmpty = useContext(SearchContext)
 
     // get following if results is empty
     React.useEffect(() => {
-        if (!displayEmpty || !loggedIn) { return }
-        getSongFeed(setData)
+        if (loggedIn) { getSongFeedAuthed(setData) } else { getSongFeedUnauthed(followingData, setData) }
     }, [])
 
     return (

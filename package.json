@@ -1,0 +1,20 @@
+{
+    "name": "spotify_project_public",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "build": "echo \"No build specified\" && exit 1",
+        "test": "echo \"No test specified\" && exit 1",
+        "start": "npm --prefix ./server/ run dev"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dubu1/spotify_project_public.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/dubu1/spotify_project_public/issues"
+    },
+    "homepage": "https://github.com/dubu1/spotify_project_public#readme"
+}

@@ -38,58 +38,40 @@ function Account () {
         }
     }
 
-    const showAccountStatus = () => {
-        if (accountConnected) {
-            return (
-                <Flex direction="column" alignItems="center" gap={2}>
-                    <Status type="ok" title="Spotify Status" />
-                    <Text align="center" weight="bold">
-                        Spotify account connected!
-                    </Text>
-                </Flex>
-            )
-        } else {
-            return (
-                <Flex direction="column" alignItems="center" gap={2}>
-                    <Status type="warning" title="Spotify Status" />
-                    <Text align="center" weight="bold">
-                        Spotify account not connected!
-                    </Text>
-                </Flex>
-            )
-        }
-    }
-
-    const showUnlinkButton = () => {
-        if (accountConnected) {
-            return (
-                <Button text="Unlink Account" onClick={() => {
-                    unlinkSpotifyAccount()
-                    setAccountConnected(false)
-                }} />
-            )
-        } else {
-            return (
-                <Button text="Unlink Account" disabled/>
-            )
-        }
-    }
-
     return (
         <Box height={400} >
             <Button text="get users spotify account" onClick={() => { }} />
-
             <Button text="get user" onClick={() => { getUserToken() }} />
 
             <Flex height="100%" justifyContent="center" alignItems="center" direction="column" >
 
                 <Box padding={12}>
-                    { showAccountStatus() }
+                    { accountConnected
+                        ? <Flex direction="column" alignItems="center" gap={2}>
+                            <Status type="ok" title="Spotify Status" />
+                            <Text align="center" weight="bold">
+                                Spotify account connected!
+                            </Text>
+                        </Flex>
+                        : <Flex direction="column" alignItems="center" gap={2}>
+                            <Status type="warning" title="Spotify Status" />
+                            <Text align="center" weight="bold">
+                                Spotify account not connected!
+                            </Text>
+                        </Flex>
+                    }
                 </Box>
 
                 <Flex width="40%" justifyContent="between">
-                    <Button text="Connect to Spotify" color="red" onClick={() => { spotifySignIn(spotifySignInCallback) }} />
-                    { showUnlinkButton() }
+                    <Button text="Connect to Spotify" color="red" disabled={accountConnected} onClick={() => { spotifySignIn(spotifySignInCallback) }} />
+
+                    { accountConnected
+                        ? <Button text="Unlink Account" onClick={() => {
+                            unlinkSpotifyAccount()
+                            setAccountConnected(false)
+                        }} />
+                        : <Button text="Unlink Account" disabled/>
+                    }
                 </Flex>
             </Flex>
 

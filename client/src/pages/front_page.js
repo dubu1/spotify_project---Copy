@@ -165,7 +165,7 @@ export default function FrontPage () {
                 <Flex justifyContent="center" alignItems="start" direction="column">
                     { activeIndex === 0 ? <Search setData={displayDataHandler.setData} /> : null }
                     { activeIndex === 1 ? <FollowedSearch setData={displayDataHandler.setData} loggedIn={loggedIn}/> : null }
-                    { activeIndex === 2 ? <SongFeedSearch setData={displayDataHandler.setData} loggedIn={loggedIn}/> : null }
+                    { activeIndex === 2 ? <SongFeedSearch setData={displayDataHandler.setData} loggedIn={loggedIn} followingData={followingData}/> : null }
                     <Results windowSize={windowSize} displayData={[exploreData, followingData, songFeedData, new DisplayData({})][activeIndex]} followingData={followingData} addNextData={displayDataHandler.addNextData} followingCBs={followingCBs} />
                 </Flex>
             </SearchContext.Provider>

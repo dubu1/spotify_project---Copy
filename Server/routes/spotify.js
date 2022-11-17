@@ -218,7 +218,7 @@ router.get('/get_user_following', async (req, res) => {
 /**
  * Get followed artists from Spotify API
  */
-router.get('/get_song_feed', async (req, res) => {
+router.get('/get_song_feed_logged_in', async (req, res) => {
     const url = 'https://api.spotify.com/v1/me/following?type=artist'
     const followRes = await loggedInUserRequest(url, 'GET', req)
     const followingArtists = followRes.artists?.items
@@ -229,6 +229,17 @@ router.get('/get_song_feed', async (req, res) => {
     res.json(trackObjs.flat())
 })
 
+/**
+ * Get followed artists from Spotify API
+ */
+router.post('/get_song_feed', async (req, res) => {
+    const followingArtists = req.body
+    let trackObjs = await Promise.all(followingArtists.map(artist => getLatestSongsForID(artist.id)))
+    trackObjs = trackObjs.flat()
+    trackObjs.sort((a, b) => { return Date.parse(b.releaseDate) - Date.parse(a.releaseDate) })
+
+    res.json(trackObjs.flat())
+})
 /**
  * Follow artist on user account
  */
