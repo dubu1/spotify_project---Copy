@@ -1,0 +1,26 @@
+version: '3'
+services:
+  server_dev:
+    build:
+      context: ./server/
+    command: npm start
+    volumes:
+      - /server/app/node_modules
+    ports:
+      - "5001:5001"
+    # env_file: ./api/.env # TODO - uncomment this to auto-load your .env file!
+    environment:
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: "true"
+
+  client_dev:
+    build:
+      context: ./client/
+    command: npm start
+    volumes:
+      - /usr/app/node_modules
+    depends_on:
+      - server_dev
+    ports:
+      - "3000:3000"
+    # env_file: ./client/.env # TODO - uncomment this to auto-load your .env file!
