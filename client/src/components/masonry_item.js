@@ -12,18 +12,25 @@ export function MasonryItem ({ data }) {
         else return data.images[0]
     }
 
-    const mobileTapShowBtns = () => {
-        if (!showHover && isMobile) {
-            setShowHover(true)
-        } else if (showHover && isMobile) {
-            setShowHover(false)
+    const handleTap = () => {
+        const mobileTap = () => {
+            if (!showHover && isMobile) {
+                setShowHover(true)
+            } else if (showHover && isMobile) {
+                setShowHover(false)
+            }
+        }
+        mobileTap()
+
+        if (data.type === 'artist' || data.type === 'album') {
+            data.setExploreCb(data.id)
         }
     }
 
     return (
 
         <div className="my-masonry-item">
-            <TapArea rounding={1} tapStyle='compress' onTap={() => { mobileTapShowBtns() }}>
+            <TapArea rounding={1} tapStyle='compress' onTap={() => { handleTap() }}>
                 <Card
                     image={
                         <Mask height={220} rounding={1}>
@@ -55,8 +62,8 @@ export function MasonryItem ({ data }) {
                                         {data.type === 'artist' &&
                                             <Box>
                                                 {data.isFollowing === true
-                                                    ? <Button text='Unfollow' onClick={() => { data.cb(data) }} />
-                                                    : <Button text='Follow' onClick={() => { data.cb(data) }} />
+                                                    ? <Button text='Unfollow' onClick={() => { data.followCb(data) }} />
+                                                    : <Button text='Follow' onClick={() => { data.followCb(data) }} />
                                                 }
                                             </Box>
                                         }

@@ -7,7 +7,7 @@ class DisplayData {
         this.idSet = idSet === undefined ? [] : idSet
     }
 
-    setSongFeedData (data) {
+    setDataItems (data) {
         this.items = data
     }
 

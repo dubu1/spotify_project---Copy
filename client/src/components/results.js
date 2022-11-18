@@ -1,8 +1,9 @@
 import React, { useRef, useState, createContext } from 'react'
 
-import { Box, Masonry } from 'gestalt'
+import { Masonry } from 'gestalt'
 
 import 'gestalt/dist/gestalt.css'
+import '../css/results.css'
 import { search } from '../routes/spotify'
 import { MasonryItem } from './masonry_item'
 
@@ -18,38 +19,30 @@ const loadMoreItems = async (nextURL, addNextData) => {
     }, addNextData)
 }
 
-export function Results ({ windowSize, displayData, followingData, addNextData, followingCBs }) {
+export function Results ({ windowSize, displayData, followingData, addNextData, masonryCBs }) {
     const [isFetching, setFetching] = useState(false)
     const scrollContainerRef = useRef(null)
     const items = displayData.items.map(item => {
-        if (item.type !== 'artist') return item
-        if (!followingData.idSet.includes(item.id)) {
-            item.isFollowing = false
-            item.cb = (data) => { followingCBs.addToFollowingCb(data) }
-        } else if (followingData.idSet.includes(item.id)) {
-            item.isFollowing = true
-            item.cb = (data) => { followingCBs.removeFromFollowingCb(data) }
+        if (item.type === 'artist') {
+            if (!followingData.idSet.includes(item.id)) {
+                item.isFollowing = false
+                item.followCb = (data) => { masonryCBs.followingCBs.addToFollowingCb(data) }
+            } else if (followingData.idSet.includes(item.id)) {
+                item.isFollowing = true
+                item.followCb = (data) => { masonryCBs.followingCBs.removeFromFollowingCb(data) }
+            }
+            item.setExploreCb = (data) => { masonryCBs.setExploreCBs.setArtistExploreCb(data) }
+        } else if (item.type === 'album') {
+            item.setExploreCb = (data) => { masonryCBs.setExploreCBs.setAlbumExploreCb(data) }
         }
+
         return item
     })
     const nextURL = displayData.next
 
     return (
 
-        <Box
-            width="100%"
-            height={windowSize.innerHeight - 330}
-            overflow="auto"
-            ref={scrollContainerRef}
-            dangerouslySetInlineStyle={{
-                __style: {
-                    overflowX: 'hidden',
-                    scrollbarColor: 'black white',
-                    scrollbarWidth: 'thin'
-                }
-            }}
-        >
-
+        <div className='my-results' ref={scrollContainerRef} style={{ height: windowSize.innerHeight - 330 }}>
             <Masonry
                 Item={MasonryItem}
                 items={items}
@@ -57,7 +50,7 @@ export function Results ({ windowSize, displayData, followingData, addNextData, 
                 layout="basic"
                 scrollContainer={() => scrollContainerRef.current}
                 virtualize
-                loadItems={ () => {
+                loadItems={() => {
                     if (!isFetching & nextURL !== '') {
                         setFetching(true)
                         loadMoreItems(nextURL, addNextData)
@@ -66,7 +59,6 @@ export function Results ({ windowSize, displayData, followingData, addNextData, 
                     }
                 }}
             />
-
-        </Box>
+        </div>
     )
 }

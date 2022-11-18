@@ -63,6 +63,30 @@ const spotifyUnfollowArtist = async (artistID) => {
     return json
 }
 
+const spotifyGetArtistAlbums = async (artistID) => {
+    const res = await fetch(`/spotify/get_artist_albums?artist_id=${artistID}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+        }
+    })
+    const json = await res.json()
+    return json
+}
+
+const spotifyGetAlbumTracks = async (albumID) => {
+    const res = await fetch(`/spotify/get_album_tracks?album_id=${albumID}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+        }
+    })
+    const json = await res.json()
+    return json
+}
+
 const spotifySignIn = async (callbackFunc) => {
     const res = await fetch('/spotify/login', {
         method: 'GET',
@@ -77,4 +101,4 @@ const spotifySignIn = async (callbackFunc) => {
     callbackFunc(json.url)
 }
 
-export { search, spotifySignIn, getUserFollowing, getSongFeedUnauthed, getSongFeedAuthed, spotifyFollowArtist, spotifyUnfollowArtist }
+export { search, spotifySignIn, getUserFollowing, getSongFeedUnauthed, getSongFeedAuthed, spotifyFollowArtist, spotifyUnfollowArtist, spotifyGetArtistAlbums, spotifyGetAlbumTracks }

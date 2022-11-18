@@ -9,7 +9,7 @@ import { FollowedSearch } from '../components/followed_search'
 import { Results } from '../components/results'
 import { Search } from '../components/search'
 import { SongFeedSearch } from '../components/song_feed_search'
-import { getUserFollowing, spotifyFollowArtist, spotifyUnfollowArtist } from '../routes/spotify'
+import { getUserFollowing, spotifyFollowArtist, spotifyUnfollowArtist, spotifyGetArtistAlbums, spotifyGetAlbumTracks } from '../routes/spotify'
 import { saveLocalStorageData, getLocalStorageData } from '../utils/local_storage'
 
 export const SearchContext = createContext()
@@ -109,26 +109,45 @@ export default function FrontPage () {
 
     }
 
-    // callbacks to add or remove from following list
-    const followingCBs = {
-        addToFollowingCb: async data => {
-            const newDisplayData = followingData.clone()
-            newDisplayData.appendFollowingArtist(data)
-            setFollowingData(newDisplayData)
-            if (loggedIn) {
-                await spotifyFollowArtist(data.id)
-            } else {
-                saveLocalStorageData(JSON.stringify(newDisplayData))
+    const masonryCBs = {
+        // callbacks to add or remove from following list
+        followingCBs: {
+            addToFollowingCb: async data => {
+                const newDisplayData = followingData.clone()
+                newDisplayData.appendFollowingArtist(data)
+                setFollowingData(newDisplayData)
+                if (loggedIn) {
+                    await spotifyFollowArtist(data.id)
+                } else {
+                    saveLocalStorageData(JSON.stringify(newDisplayData))
+                }
+            },
+            removeFromFollowingCb: async data => {
+                const newDisplayData = followingData.clone()
+                newDisplayData.removeFollowingArtist(data)
+                setFollowingData(newDisplayData)
+                if (loggedIn) {
+                    await spotifyUnfollowArtist(data.id)
+                } else {
+                    saveLocalStorageData(JSON.stringify(newDisplayData))
+                }
             }
+
         },
-        removeFromFollowingCb: async data => {
-            const newDisplayData = followingData.clone()
-            newDisplayData.removeFollowingArtist(data)
-            setFollowingData(newDisplayData)
-            if (loggedIn) {
-                await spotifyUnfollowArtist(data.id)
-            } else {
-                saveLocalStorageData(JSON.stringify(newDisplayData))
+
+        // callbacks to display albums or tracks from artist when item is clicked
+        setExploreCBs: {
+            setArtistExploreCb: async data => {
+                const albums = await spotifyGetArtistAlbums(data)
+                const newDisplayData = new DisplayData({})
+                newDisplayData.setDataItems(albums)
+                setExploreData(newDisplayData)
+            },
+            setAlbumExploreCb: async data => {
+                const tracks = await spotifyGetAlbumTracks(data)
+                const newDisplayData = new DisplayData({})
+                newDisplayData.setDataItems(tracks)
+                setExploreData(newDisplayData)
             }
         }
 
@@ -155,7 +174,6 @@ export default function FrontPage () {
             <Text>
                 logged in
             </Text>
-
             }
 
             <Button size='lg' text="print following" onClick={() => { helpers.printFollowing() }} />
@@ -166,7 +184,7 @@ export default function FrontPage () {
                     { activeIndex === 0 ? <Search setData={displayDataHandler.setData} /> : null }
                     { activeIndex === 1 ? <FollowedSearch setData={displayDataHandler.setData} loggedIn={loggedIn}/> : null }
                     { activeIndex === 2 ? <SongFeedSearch setData={displayDataHandler.setData} loggedIn={loggedIn} followingData={followingData}/> : null }
-                    <Results windowSize={windowSize} displayData={[exploreData, followingData, songFeedData, new DisplayData({})][activeIndex]} followingData={followingData} addNextData={displayDataHandler.addNextData} followingCBs={followingCBs} />
+                    <Results windowSize={windowSize} displayData={[exploreData, followingData, songFeedData, new DisplayData({})][activeIndex]} followingData={followingData} addNextData={displayDataHandler.addNextData} masonryCBs={masonryCBs} />
                 </Flex>
             </SearchContext.Provider>
         </Box>

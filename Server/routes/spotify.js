@@ -6,6 +6,7 @@ const randomstring = require('randomstring')
 const XMLHttpRequest = require('xhr2')
 
 const env = require('../env_config')
+const Album = require('../models/album')
 const Track = require('../models/track')
 const firebaseUtils = require('../utils/firebase_utils')
 const spotifyUtils = require('../utils/spotify_utils')
@@ -56,7 +57,7 @@ async function spotifyAPIRequest (url, methodName, token) {
         const json = await res.json()
         return json
     } else {
-        console.log(`Spotify Request Status: ${res.status}`)
+        console.log(`Spotify Request Status: ${res.status}\nMessage: ${res.message}`)
         return res.status
     }
 }
@@ -155,6 +156,49 @@ router.get('/close', (req, res) => {
     res.send('<script>window.close();</script > ')
 })
 
+const getAlbumsFromArtistID = async (artistID) => {
+    const url = `https://api.spotify.com/v1/artists/${artistID}/albums`
+    const albumsRes = await spotifyAPIRequest(url, 'GET', serverAccessToken)
+    const albumsObjs = albumsRes.items.map(album => { return new Album(album) })
+    return albumsObjs
+}
+const getAlbumFromAlbumID = async (albumID) => {
+    const url = `https://api.spotify.com/v1/albums/${albumID}`
+    const albumRes = await spotifyAPIRequest(url, 'GET', serverAccessToken)
+    const albumObj = new Album(albumRes)
+    return albumObj
+}
+const getTracksFromAlbumID = async (albumID) => {
+    const albumObj = await getAlbumFromAlbumID(albumID)
+    const url = `https://api.spotify.com/v1/albums/${albumID}/tracks`
+    const tracksRes = await spotifyAPIRequest(url, 'GET', serverAccessToken)
+    const trackObjs = tracksRes.items.map(track => {
+        const trackObj = new Track(track)
+        trackObj.setAlbum(albumObj)
+        console.log(trackObj)
+        return trackObj
+    })
+    return trackObjs
+}
+
+/**
+ * Get artist albums from Spotify API
+ */
+router.get('/get_artist_albums', async (req, res) => {
+    const artistID = req.query.artist_id
+    const albums = await getAlbumsFromArtistID(artistID)
+    res.json(albums)
+})
+
+/**
+ * Get album tracks from Spotify API
+ */
+router.get('/get_album_tracks', async (req, res) => {
+    const albumID = req.query.album_id
+    const tracks = await getTracksFromAlbumID(albumID)
+    res.json(tracks)
+})
+
 // ------- require logins ----- //
 
 const loggedInUserRequest = async (url, method, req) => {
@@ -182,7 +226,7 @@ const loggedInUserRequest = async (url, method, req) => {
     }
 }
 
-const getLatestSongsForID = async (artistID) => {
+const getLatestSongsFromArtistID = async (artistID) => {
     const albumNamesRes = await spotifyAPIRequest(`https://api.spotify.com/v1/artists/${artistID}/albums`, 'GET', serverAccessToken)
     if (albumNamesRes.error) return console.log(albumNamesRes.error)
     const albumIDList = albumNamesRes.items.map(album => { return album.id })
@@ -221,7 +265,7 @@ router.get('/get_song_feed_logged_in', async (req, res) => {
     const url = 'https://api.spotify.com/v1/me/following?type=artist'
     const followRes = await loggedInUserRequest(url, 'GET', req)
     const followingArtists = followRes.artists?.items
-    let trackObjs = await Promise.all(followingArtists.map(artist => getLatestSongsForID(artist.id)))
+    let trackObjs = await Promise.all(followingArtists.map(artist => getLatestSongsFromArtistID(artist.id)))
     trackObjs = trackObjs.flat()
     trackObjs.sort((a, b) => { return Date.parse(b.releaseDate) - Date.parse(a.releaseDate) })
 
@@ -233,7 +277,7 @@ router.get('/get_song_feed_logged_in', async (req, res) => {
  */
 router.post('/get_song_feed', async (req, res) => {
     const followingArtists = req.body
-    let trackObjs = await Promise.all(followingArtists.map(artist => getLatestSongsForID(artist.id)))
+    let trackObjs = await Promise.all(followingArtists.map(artist => getLatestSongsFromArtistID(artist.id)))
     trackObjs = trackObjs.flat()
     trackObjs.sort((a, b) => { return Date.parse(b.releaseDate) - Date.parse(a.releaseDate) })
 

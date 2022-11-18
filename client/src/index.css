@@ -6,6 +6,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* overflow-y: hidden; */
+
+}
+
+html {
+  scrollbar-color: grey white;
+  scrollbar-width: thin;
 }
 
 code {
