@@ -1,8 +1,8 @@
 const XMLHttpRequest = require('xhr2')
 
-const SPOTIFY_CONFIGS = require('../configs/spotify_configs')
+const env = require('../env_config')
 
-const authHeader = 'Basic ' + Buffer.from(SPOTIFY_CONFIGS.CLIENT_ID + ':' + SPOTIFY_CONFIGS.CLIENT_SECRET).toString('base64')
+const authHeader = 'Basic ' + Buffer.from(env.spotify.clientID + ':' + env.spotify.clientSecret).toString('base64')
 const url = 'https://accounts.spotify.com/api/token'
 
 function getAccessToken () {

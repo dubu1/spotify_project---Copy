@@ -2,7 +2,7 @@ version: '3'
 services:
   server_dev:
     build:
-      context: ./server/
+      context: ./Server/
     command: npm start
     volumes:
       - /server/app/node_modules

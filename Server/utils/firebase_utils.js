@@ -1,10 +1,10 @@
 const firebase = require('firebase/app')
 const firestore = require('firebase/firestore')
 
-const FIREBASE_CONFIG = require('../configs/firebase_configs')
+const env = require('../env_config')
 
 // Initialize Firebase
-const app = firebase.initializeApp(FIREBASE_CONFIG.FIREBASE_CONFIG)
+const app = firebase.initializeApp(env.firebase)
 const db = firestore.getFirestore(app)
 
 const getUserByUsername = async (username) => {

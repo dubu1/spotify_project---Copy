@@ -5,8 +5,7 @@ const router = express.Router()
 const randomstring = require('randomstring')
 const XMLHttpRequest = require('xhr2')
 
-const SPOTIFY_CONFIGS = require('../configs/spotify_configs')
-const Album = require('../models/album')
+const env = require('../env_config')
 const Track = require('../models/track')
 const firebaseUtils = require('../utils/firebase_utils')
 const spotifyUtils = require('../utils/spotify_utils')
@@ -114,9 +113,9 @@ router.get('/login', function (req, res) {
         url: 'https://accounts.spotify.com/authorize?' +
         querystring.stringify({
             response_type: 'code',
-            client_id: SPOTIFY_CONFIGS.CLIENT_ID,
+            client_id: env.spotify.clientID,
             scope,
-            redirect_uri: SPOTIFY_CONFIGS.REDIRECT_URI,
+            redirect_uri: env.spotify.redirectUri,
             state
         })
     })
@@ -135,7 +134,7 @@ router.get('/login_callback', async (req, res) => {
     if (!req.user) return res.send('Error, try logging in again')
 
     try {
-        const authResponse = await spotifyUtils.getAccessTokenForUser(code, SPOTIFY_CONFIGS.REDIRECT_URI)
+        const authResponse = await spotifyUtils.getAccessTokenForUser(code, env.spotify.redirectUri)
         const accessTokenUser = authResponse.access_token
         const refreshTokenUser = authResponse.refresh_token
 

@@ -9,6 +9,7 @@
       "stop-dev": "docker-compose -f docker-compose.yml stop",
       "stop-prod": "docker-compose -f docker-compose.prod.yml stop",
       "log-dev": "docker-compose -f docker-compose.yml logs --follow --timestamps",
-      "log-prod": "docker-compose -f docker-compose.prod.yml logs --follow --timestamps"
+      "log-prod": "docker-compose -f docker-compose.prod.yml logs --follow --timestamps",
+      "start-dev": "cd ./server/ && npm run dev"
     }
   }

@@ -9,10 +9,9 @@ const methodOverride = require('method-override')
 const passport = require('passport')
 
 const initializePassport = require('./utils/passport_utils')
-const serverConfigs = require('./configs/server_configs')
+const env = require('./env_config')
 
 const app = express()
-const PORT = 5001
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -23,7 +22,7 @@ app.use(cors({
 app.use(cookieParser())
 app.use(session({
     key: 'sid',
-    secret: serverConfigs.sessionSecret,
+    secret: env.session.sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -65,4 +64,4 @@ app.use('/spotify', spotifyRouter)
 app.use('/login', loginRouter)
 app.use('/helpers', helperRouter)
 
-app.listen(PORT, () => { console.log('server started on port %d', PORT) })
+app.listen(env.session.port, () => { console.log('server started on port %d', env.session.port) })
