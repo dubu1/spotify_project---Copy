@@ -26,24 +26,13 @@ export function Search ({ setData }) {
         return type.join()
     }
 
-    // set initial search when data is empty
-    React.useEffect(() => {
-        if (!displayEmpty) { return }
-        search({
-            query: `genre:${genres[Math.floor(Math.random() * genres.length)]}`,
-            type: getTypes(),
-            limit,
-            market
-        }, setData)
-    }, [])
-
     return (
 
         <Box width="55%" marginBottom={8} marginTop={4} marginEnd={3} alignSelf="center">
 
             <div ref={anchorRef}>
                 <Box marginBottom={2} marginEnd={2}>
-                    <Flex justifyContent="end" gap={4}>
+                    <Flex justifyContent="left" gap={4}>
                         <Flex alignItems="center" gap={2}>
                             <Flex.Item flex="grow">
                                 <Label htmlFor="Artist">
@@ -96,7 +85,6 @@ export function Search ({ setData }) {
                         onChange={(val) => { setSearchText(val.value) }}
                         onKeyDown={(props) => {
                             const keyPressed = props.event.code
-
                             if (keyPressed === 'Enter') {
                                 search({
                                     query: searchText,

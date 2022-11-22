@@ -1,6 +1,6 @@
 import React, { useRef, useState, createContext } from 'react'
 
-import { Masonry } from 'gestalt'
+import { Box, Flex, Masonry, Text } from 'gestalt'
 
 import 'gestalt/dist/gestalt.css'
 import '../css/results.css'
@@ -22,27 +22,24 @@ const loadMoreItems = async (nextURL, addNextData) => {
 export function Results ({ windowSize, displayData, followingData, addNextData, masonryCBs }) {
     const [isFetching, setFetching] = useState(false)
     const scrollContainerRef = useRef(null)
-    const items = displayData.items.map(item => {
-        if (item.type === 'artist') {
-            if (!followingData.idSet.includes(item.id)) {
-                item.isFollowing = false
-                item.followCb = (data) => { masonryCBs.followingCBs.addToFollowingCb(data) }
-            } else if (followingData.idSet.includes(item.id)) {
-                item.isFollowing = true
-                item.followCb = (data) => { masonryCBs.followingCBs.removeFromFollowingCb(data) }
-            }
-            item.setExploreCb = (data) => { masonryCBs.setExploreCBs.setArtistExploreCb(data) }
-        } else if (item.type === 'album') {
-            item.setExploreCb = (data) => { masonryCBs.setExploreCBs.setAlbumExploreCb(data) }
+    let items = []
+    items = displayData.items.map(item => {
+        if (item.type !== 'artist') { return item }
+        if (!followingData.idSet.includes(item.id)) {
+            item.isFollowing = false
+            item.followCb = (data) => { masonryCBs.followingCBs.addToFollowingCb(data) }
+        } else if (followingData.idSet.includes(item.id)) {
+            item.isFollowing = true
+            item.followCb = (data) => { masonryCBs.followingCBs.removeFromFollowingCb(data) }
         }
-
         return item
     })
     const nextURL = displayData.next
 
     return (
 
-        <div className='my-results' ref={scrollContainerRef} style={{ height: windowSize.innerHeight - 330 }}>
+        <div className='my-results' ref={scrollContainerRef} style={{ height: windowSize.innerHeight - 50 }}>
+
             <Masonry
                 Item={MasonryItem}
                 items={items}

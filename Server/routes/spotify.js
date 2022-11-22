@@ -157,25 +157,28 @@ router.get('/close', (req, res) => {
 })
 
 const getAlbumsFromArtistID = async (artistID) => {
-    const url = `https://api.spotify.com/v1/artists/${artistID}/albums`
+    const url = `https://api.spotify.com/v1/artists/${artistID}/albums?market=GB`
     const albumsRes = await spotifyAPIRequest(url, 'GET', serverAccessToken)
-    const albumsObjs = albumsRes.items.map(album => { return new Album(album) })
+    // console.log(albumsRes)
+    const albumsObjs = albumsRes.items.map(album => {
+        return new Album(album)
+    })
     return albumsObjs
 }
 const getAlbumFromAlbumID = async (albumID) => {
-    const url = `https://api.spotify.com/v1/albums/${albumID}`
+    const url = `https://api.spotify.com/v1/albums/${albumID}?market=GB`
     const albumRes = await spotifyAPIRequest(url, 'GET', serverAccessToken)
+    // console.log(albumRes)
     const albumObj = new Album(albumRes)
     return albumObj
 }
 const getTracksFromAlbumID = async (albumID) => {
     const albumObj = await getAlbumFromAlbumID(albumID)
-    const url = `https://api.spotify.com/v1/albums/${albumID}/tracks`
+    const url = `https://api.spotify.com/v1/albums/${albumID}/tracks?market=GB`
     const tracksRes = await spotifyAPIRequest(url, 'GET', serverAccessToken)
     const trackObjs = tracksRes.items.map(track => {
         const trackObj = new Track(track)
         trackObj.setAlbum(albumObj)
-        console.log(trackObj)
         return trackObj
     })
     return trackObjs
@@ -197,6 +200,26 @@ router.get('/get_album_tracks', async (req, res) => {
     const albumID = req.query.album_id
     const tracks = await getTracksFromAlbumID(albumID)
     res.json(tracks)
+})
+
+/**
+ * Get artist data from Spotify API
+ */
+router.get('/get_artist_data', async (req, res) => {
+    const artistID = req.query.artist_id
+    const url = `https://api.spotify.com/v1/artists/${artistID}/`
+    const artist = await spotifyAPIRequest(url, 'GET', serverAccessToken)
+    res.json(artist)
+})
+
+/**
+ * Get album data from Spotify API
+ */
+router.get('/get_album_data', async (req, res) => {
+    const albumID = req.query.album_id
+    const url = `https://api.spotify.com/v1/albums/${albumID}/`
+    const album = await spotifyAPIRequest(url, 'GET', serverAccessToken)
+    res.json(album)
 })
 
 // ------- require logins ----- //

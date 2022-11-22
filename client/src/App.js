@@ -14,8 +14,11 @@ function App () {
         <>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<Layout />}>
+                    <Route path={'/'} element={<Layout />}>
                         <Route index element={<FrontPage />} />
+                        <Route path='/explore' element={<FrontPage />} />
+                        <Route path='/following' element={<FrontPage />} />
+                        <Route path='/new-songs' element={<FrontPage />} />
                         <Route path="/account" element={<Account />} />
                     </Route>
                 </Routes>

@@ -44,10 +44,11 @@ export function Header ({ loggedIn, setLoggedIn }) {
                 <div style={{ paddingBlock: headingExpanded ? '1rem' : '3rem' }} className="my-heading">
                     <Flex justifyContent="between" alignItems="center">
                         <Box>
-                            <TapArea fullWidth="false" fullHeight="false" onMouseDown={() => { navigate('/') }}>
-                                <h1 style={{ color: '#ffffff' }} className=".font-face-montserrat">
-                                Song Feed
-                                </h1>
+                            <TapArea fullWidth="false" fullHeight="false" onMouseDown={() => {
+                                navigate('/')
+                                location.reload(false)
+                            }}>
+                                <h1 style={{ color: '#ffffff' }} className=".font-face-montserrat"> Song Feed </h1>
                             </TapArea>
                         </Box>
 

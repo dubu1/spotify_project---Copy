@@ -1,0 +1,23 @@
+.my-item-banner {
+	background: linear-gradient(-45deg, #ecb29f, hsl(337, 44%, 66%), #83cbe6, #90d4c5);
+    /* background: black;
+    background-size: 400% 400%;
+    animation: gradient 1s ease infinite, fadeIn 1s ease; */
+}
+
+/* @keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+} */

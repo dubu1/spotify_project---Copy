@@ -5,7 +5,7 @@ const search = async ({ query, type, market = undefined, limit = undefined, offs
         headers: { 'Content-Type': 'application/json' }
     })
     const json = await res.json()
-    callbackFunc(json)
+    await callbackFunc(json)
 }
 
 const getUserFollowing = async (callbackFunc) => {
@@ -87,6 +87,45 @@ const spotifyGetAlbumTracks = async (albumID) => {
     return json
 }
 
+const spotifyGetDefaultExplore = async () => {
+    const genres = ['anime', 'dance', 'edm', 'hip-hop', 'j-rock', 'k-pop', 'pop', 'sad']
+    const query = `genre:${genres[Math.floor(Math.random() * genres.length)]}`
+    const type = ['artist', 'album', 'track']
+    const res = await fetch(`/spotify/search?q_param=${query}&type_param=${type}&market_param=${'GB'}&limit_param=${20}&offset_param=${0}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+        }
+    })
+    const json = await res.json()
+    return json
+}
+
+const spotifyGetArtistData = async (artistID) => {
+    const res = await fetch(`/spotify/get_artist_data?artist_id=${artistID}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+        }
+    })
+    const json = await res.json()
+    return json
+}
+
+const spotifyGetAlbumData = async (albumID) => {
+    const res = await fetch(`/spotify/get_album_data?album_id=${albumID}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+        }
+    })
+    const json = await res.json()
+    return json
+}
+
 const spotifySignIn = async (callbackFunc) => {
     const res = await fetch('/spotify/login', {
         method: 'GET',
@@ -101,4 +140,4 @@ const spotifySignIn = async (callbackFunc) => {
     callbackFunc(json.url)
 }
 
-export { search, spotifySignIn, getUserFollowing, getSongFeedUnauthed, getSongFeedAuthed, spotifyFollowArtist, spotifyUnfollowArtist, spotifyGetArtistAlbums, spotifyGetAlbumTracks }
+export { search, spotifySignIn, getUserFollowing, getSongFeedUnauthed, getSongFeedAuthed, spotifyFollowArtist, spotifyUnfollowArtist, spotifyGetArtistAlbums, spotifyGetDefaultExplore, spotifyGetAlbumTracks, spotifyGetArtistData, spotifyGetAlbumData }

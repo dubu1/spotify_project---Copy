@@ -2,22 +2,24 @@ import 'gestalt/dist/gestalt.css'
 import React, { useState, useRef, createContext } from 'react'
 
 import { Box, Button, Flex, Tabs, Text } from 'gestalt'
-import { useOutletContext } from 'react-router-dom'
+import { useOutletContext, useSearchParams } from 'react-router-dom'
 
 import { DisplayData } from '../class/display_data_class'
+import { CurrentItemBanner } from '../components/current_item_banner'
 import { FollowedSearch } from '../components/followed_search'
 import { Results } from '../components/results'
 import { Search } from '../components/search'
 import { SongFeedSearch } from '../components/song_feed_search'
-import { getUserFollowing, spotifyFollowArtist, spotifyUnfollowArtist, spotifyGetArtistAlbums, spotifyGetAlbumTracks } from '../routes/spotify'
+import { spotifyGetDefaultExplore, getUserFollowing, spotifyFollowArtist, spotifyUnfollowArtist, spotifyGetArtistAlbums, spotifyGetAlbumTracks, spotifyGetArtistData, spotifyGetAlbumData } from '../routes/spotify'
 import { saveLocalStorageData, getLocalStorageData } from '../utils/local_storage'
 
 export const SearchContext = createContext()
 const tabs = [
-    { href: '#', text: 'Explore' },
-    { href: '/followed', text: 'Followed Artists' },
-    { href: '/song-feed', text: 'Song Feed' }
+    { href: '/explore', text: 'Explore' },
+    { href: '/following', text: 'Followed Artists' },
+    { href: '/new-songs', text: 'New Songs' }
 ]
+const currentActionList = []
 
 export default function FrontPage () {
     const [windowSize, setWindowSize] = useState(getWindowSize())
@@ -26,9 +28,12 @@ export default function FrontPage () {
     const [songFeedData, setSongFeedData] = useState(new DisplayData({}))
     const [loggedIn, setLoggedIn] = useOutletContext()
     const [activeIndex, setActiveIndex] = React.useState(0)
+    const [searchParams, setSearchParams] = useSearchParams()
+    const [bannerData, setBannerData] = useState(null)
 
     // change tab index
     const handleTabChange = ({ activeTabIndex, event }) => {
+        history.pushState({}, '', tabs[activeTabIndex].href)
         event.preventDefault()
         setActiveIndex(3)
         setTimeout(() => {
@@ -46,6 +51,52 @@ export default function FrontPage () {
             window.removeEventListener('resize', handleWindowResize)
         }
     }, [])
+
+    // execute search query if it exists
+    React.useEffect(() => {
+        const setAlbumExplore = async (data) => {
+            const tracks = await spotifyGetAlbumTracks(data)
+            const newDisplayData = new DisplayData({})
+            newDisplayData.setDataItems(tracks)
+            if (currentActionList.at(-1) !== 'album') { return }
+            currentActionList.length = 0
+            const album = await spotifyGetAlbumData(data)
+            setBannerData(album)
+            setExploreData(newDisplayData)
+        }
+        const setArtistExplore = async (data) => {
+            const albums = await spotifyGetArtistAlbums(data)
+            const newDisplayData = new DisplayData({})
+            newDisplayData.setDataItems(albums)
+            if (currentActionList.at(-1) !== 'artist') { return }
+            currentActionList.length = 0
+            const artist = await spotifyGetArtistData(data)
+            setBannerData(artist)
+            setExploreData(newDisplayData)
+        }
+        const setDefaultExplore = async () => {
+            const data = await spotifyGetDefaultExplore()
+            const newDisplayData = new DisplayData({})
+            newDisplayData.setData(data)
+            if (currentActionList.at(-1) !== 'explore') { return }
+            currentActionList.length = 0
+            setBannerData(null)
+            setExploreData(newDisplayData)
+        }
+
+        const urlParams = new URLSearchParams(searchParams)
+        if (urlParams.toString() === '') {
+            currentActionList.push('explore')
+            setDefaultExplore()
+        } else if (urlParams.has('artist')) {
+            currentActionList.push('artist')
+            setArtistExplore(urlParams.get('artist'))
+        } else if (urlParams.has('album')) {
+            currentActionList.push('album')
+            setAlbumExplore(urlParams.get('album'))
+        }
+        console.log(currentActionList)
+    }, [searchParams])
 
     // get following data from local on start or logged in
     React.useEffect(() => {
@@ -81,7 +132,7 @@ export default function FrontPage () {
                 setFollowingData(newDisplayData)
                 break
             case 2:
-                newDisplayData.setSongFeedData(data)
+                newDisplayData.setDataItems(data)
                 setSongFeedData(newDisplayData)
                 break
             default:
@@ -109,6 +160,7 @@ export default function FrontPage () {
 
     }
 
+    // callbacks for masonry
     const masonryCBs = {
         // callbacks to add or remove from following list
         followingCBs: {
@@ -133,33 +185,6 @@ export default function FrontPage () {
                 }
             }
 
-        },
-
-        // callbacks to display albums or tracks from artist when item is clicked
-        setExploreCBs: {
-            setArtistExploreCb: async data => {
-                const albums = await spotifyGetArtistAlbums(data)
-                const newDisplayData = new DisplayData({})
-                newDisplayData.setDataItems(albums)
-                setExploreData(newDisplayData)
-            },
-            setAlbumExploreCb: async data => {
-                const tracks = await spotifyGetAlbumTracks(data)
-                const newDisplayData = new DisplayData({})
-                newDisplayData.setDataItems(tracks)
-                setExploreData(newDisplayData)
-            }
-        }
-
-    }
-
-    const helpers = {
-        printFollowing: () => {
-            console.log(followingData)
-        },
-        clearFollowing: () => {
-            setFollowingData(new DisplayData({}))
-            localStorage.removeItem('followedArtists')
         }
     }
 
@@ -170,18 +195,10 @@ export default function FrontPage () {
                     <Tabs activeTabIndex={activeIndex} onChange={handleTabChange} tabs={tabs} />
                 </Box>
             </Flex>
-            {loggedIn &&
-            <Text>
-                logged in
-            </Text>
-            }
-
-            <Button size='lg' text="print following" onClick={() => { helpers.printFollowing() }} />
-            <Button size='lg' text="clear following" onClick={() => { helpers.clearFollowing() }} />
 
             <SearchContext.Provider value={[exploreData, followingData, songFeedData, new DisplayData({})][activeIndex].isEmpty()}>
                 <Flex justifyContent="center" alignItems="start" direction="column">
-                    { activeIndex === 0 ? <Search setData={displayDataHandler.setData} /> : null }
+                    { activeIndex === 0 ? <> <Search setData={displayDataHandler.setData} /> <CurrentItemBanner bannerData={bannerData}/> </> : null }
                     { activeIndex === 1 ? <FollowedSearch setData={displayDataHandler.setData} loggedIn={loggedIn}/> : null }
                     { activeIndex === 2 ? <SongFeedSearch setData={displayDataHandler.setData} loggedIn={loggedIn} followingData={followingData}/> : null }
                     <Results windowSize={windowSize} displayData={[exploreData, followingData, songFeedData, new DisplayData({})][activeIndex]} followingData={followingData} addNextData={displayDataHandler.addNextData} masonryCBs={masonryCBs} />
